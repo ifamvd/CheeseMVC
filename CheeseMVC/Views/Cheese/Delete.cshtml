@@ -13,7 +13,7 @@
         <select name="name" id="name">
         @foreach(var cheese in ViewBag.cheeses)
         {
-            <option value="@cheese.Name">@cheese.Name</option>
+            <option value="@cheese.CheeseId">@cheese.Name</option>
         }
         </select>
         <input type="submit" value="Delete" />

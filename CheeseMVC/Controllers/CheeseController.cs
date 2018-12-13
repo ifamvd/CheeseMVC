@@ -11,12 +11,12 @@ namespace CheeseMVC.Controllers
 {
     public class CheeseController : Controller
     {
-        static private List<Cheese> Cheeses = new List<Cheese>();
+        
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            ViewBag.cheeses = Cheeses;
+            ViewBag.cheeses = CheeseData.GetAll();
             return View();
         }
 
@@ -27,35 +27,32 @@ namespace CheeseMVC.Controllers
 
         public IActionResult Delete()
         {
-            ViewBag.cheeses = Cheeses;
+            ViewBag.cheeses = CheeseData.GetAll();
             return View();
         }
 
         [HttpPost]
         [Route("/Cheese/Add")]
-        public IActionResult NewCheese(string name, string desc)
+        public IActionResult NewCheese(Cheese newCheese)
         {
-            // Add new cheese to existing cheese list
-            Cheeses.Add(new Cheese(name, desc));
+            CheeseData.Add(newCheese);
             return Redirect("/Cheese");
         }
 
         [HttpPost]
         [Route("/Cheese/Delete")]
-        public IActionResult RemoveCheese(string name)
+        public IActionResult RemoveCheese(int name)
         {
-            var item = Cheeses.SingleOrDefault(x => x.Name == name);
-            if (item != null) Cheeses.Remove(item);
+            CheeseData.Remove(name);
             return Redirect("/Cheese");
         }
 
         [HttpPost]
-        public IActionResult RemoveCheeseMultiple(string[] names)
+        public IActionResult RemoveCheeseMultiple(int[] names)
         {
-            foreach(string name in names)
+            foreach(int name in names)
             {
-                var item = Cheeses.SingleOrDefault(x => x.Name == name);
-                if (item != null) Cheeses.Remove(item);
+                CheeseData.Remove(name);
             }
             return Redirect("/Cheese");
         }
