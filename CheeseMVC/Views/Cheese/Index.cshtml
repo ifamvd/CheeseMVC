@@ -1,20 +1,21 @@
 ﻿@{
 }
+@model List<CheeseMVC.Models.Cheese>
 
 <h1>My Cheese</h1>
 
 <p><a href="/cheese/add">Add Cheese</a> | <a asp-controller="Cheese" asp-action="Add">Add Cheese (different way)</a></p>
 
-@if (ViewBag.cheeses.Count == 0)
+@if (Model.Count == 0)
 {
     <p>No Cheeses yet!</p>
 }
-@if (ViewBag.cheeses.Count > 0)
+@if (Model.Count > 0)
 {
     <form method="post" action="/Cheese/RemoveCheeseMultiple">
-        @foreach (var cheese in ViewBag.cheeses)
+        @foreach (Cheese cheese in Model)
         {
-            <p><input type="checkbox" name="names" value="@cheese.CheeseId" /> @cheese.Name -- @cheese.Description</p><a asp-controller="Cheese" asp-action="Edit" asp-route-cheeseId="@cheese.CheeseId">edit</a>
+            <p><input type="checkbox" name="names" value="@cheese.CheeseId" /> @cheese.Name -- @cheese.Description -- <a asp-controller="Cheese" asp-action="Edit" asp-route-cheeseId="@cheese.CheeseId">edit</a></p>
         }
         <input type="submit" value="Delete" />
     </form>
