@@ -57,5 +57,21 @@ namespace CheeseMVC.Controllers
             return Redirect("/Cheese");
         }
 
+        public IActionResult Edit(int cheeseId)
+        {
+            ViewBag.cheese = CheeseData.GetById(cheeseId);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int cheeseId, string name, string description)
+        {
+            // query CheeseData for the cheese with the given id, and then update its name and description. Redirect the user to the home page.
+            Cheese cheese = CheeseData.GetById(cheeseId);
+            cheese.Name = name;
+            cheese.Description = description;
+            return Redirect("/Cheese");
+        }
+
     }
 }
