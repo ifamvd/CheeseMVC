@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CheeseMVC.Models;
 using CheeseMVC.ViewModels;
+using CheeseMVC.Data;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,12 +13,17 @@ namespace CheeseMVC.Controllers
 {
     public class CheeseController : Controller
     {
-        
+        // additional database stuff
+        private CheeseDbContext context;
+        public CheeseController(CheeseDbContext dbContext)
+        {
+            context = dbContext;
+        }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            List<Cheese> cheeses = CheeseData.GetAll();
+            List<Cheese> cheeses = context.Cheeses.ToList();
             return View(cheeses);
         }
 
@@ -29,7 +35,7 @@ namespace CheeseMVC.Controllers
 
         public IActionResult Delete()
         {
-            ViewBag.cheeses = CheeseData.GetAll();
+            ViewBag.cheeses = context.Cheeses.ToList();
             return View();
         }
 
@@ -44,7 +50,10 @@ namespace CheeseMVC.Controllers
                     Description = addCheeseViewModel.Description,
                     Type = addCheeseViewModel.Type
                 };
-                CheeseData.Add(newCheese);
+                // database stuff
+                context.Cheeses.Add(newCheese);
+                context.SaveChanges();
+
                 return Redirect("/Cheese");
             }
             return View(addCheeseViewModel);
@@ -54,7 +63,9 @@ namespace CheeseMVC.Controllers
         [Route("/Cheese/Delete")]
         public IActionResult RemoveCheese(int name)
         {
-            CheeseData.Remove(name);
+            Cheese toRemove = context.Cheeses.Single(c => c.ID == name);
+            context.Cheeses.Remove(toRemove);
+            context.SaveChanges();
             return Redirect("/Cheese");
         }
 
@@ -63,14 +74,21 @@ namespace CheeseMVC.Controllers
         {
             foreach(int name in names)
             {
-                CheeseData.Remove(name);
+                // database stuff
+                Cheese theCheese = context.Cheeses.Single(c => c.ID == name);
+                context.Cheeses.Remove(theCheese);
             }
+
+            // database stuff
+            context.SaveChanges();
+
             return Redirect("/Cheese");
         }
 
         public IActionResult Edit(int cheeseId)
         {
-            ViewBag.cheese = CheeseData.GetById(cheeseId);
+            ViewBag.cheese = context.Cheeses.Single(c => c.ID == cheeseId);
+            context.SaveChanges();
             return View();
         }
 
@@ -78,9 +96,11 @@ namespace CheeseMVC.Controllers
         public IActionResult Edit(int cheeseId, string name, string description)
         {
             // query CheeseData for the cheese with the given id, and then update its name and description. Redirect the user to the home page.
-            Cheese cheese = CheeseData.GetById(cheeseId);
+            Cheese cheese = context.Cheeses.Single(c => c.ID == cheeseId);
             cheese.Name = name;
             cheese.Description = description;
+            context.Cheeses.Update(cheese);
+            context.SaveChanges();
             return Redirect("/Cheese");
         }
 

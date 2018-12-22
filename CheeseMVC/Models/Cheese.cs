@@ -10,14 +10,7 @@ namespace CheeseMVC.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public CheeseType Type { get; set; }
-
-        public int CheeseId { get; set; }
-        private static int next = 1;
-
-        public Cheese()
-        {
-            CheeseId = next;
-            next++;
-        }
+        public int ID { get; set; }
+        // can also do public int CheeseID { get; set; }
     }
 }
